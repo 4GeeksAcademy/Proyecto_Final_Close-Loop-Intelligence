@@ -12,7 +12,10 @@ scikit-learn
 seaborn>=0.12.2
 sqlalchemy>=2.0.38
 sympy>=1.10.1
+<<<<<<< HEAD
 opendatasets
+=======
+>>>>>>> 5a4ea6a41ee1ae336c4657f68f459de4c5148d57
 xgboost
 sqlite3
 glob
