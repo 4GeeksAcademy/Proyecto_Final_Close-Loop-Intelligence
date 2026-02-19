@@ -1,3 +1,7 @@
 __pycache__
 .env
+.learn__pycache__
+.env
 .learn
+venv/data/raw/brazilian-ecommerce
+src/BaseSQL.db
