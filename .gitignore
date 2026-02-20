@@ -1,13 +1,9 @@
 __pycache__
 .env
-<<<<<<< HEAD
 .learn__pycache__
-.env
 .learn
 venv/data/raw/brazilian-ecommerce
 src/BaseSQL.db
-=======
-.learn
 venv/
 data/raw/brazilian-ecommerce
->>>>>>> 5a4ea6a41ee1ae336c4657f68f459de4c5148d57
+venv/data/processed/MasterVentas.csv
