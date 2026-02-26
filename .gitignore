@@ -6,6 +6,7 @@ venv/data/raw/brazilian-ecommerce
 src/BaseSQL.db
 venv/
 data/raw/brazilian-ecommerce
-venv/data/processed/MasterVentas.csv
-/workspaces/Proyecto_Final_Close-Loop-Intelligence/data/processed/X_test_selected.csv
-/workspaces/Proyecto_Final_Close-Loop-Intelligence/data/processed/X_train_selected.csv
+data/processed/MasterVentas.csv
+data/processed/X_test_selected.csv
+data/processed/X_train_selected.csv
+models/best_rf_model.pklmodels/best_rf_model.pkl
