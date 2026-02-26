@@ -17,3 +17,4 @@ xgboost
 sqlite3
 glob
 imblearn
+streamlit>=1.20.0

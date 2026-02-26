@@ -27,31 +27,20 @@ model = load_model()
 st.sidebar.header("📥 Datos del Producto")
 
 def user_input_features():
-    # 10 variables utilizadas para la predicción ['Ciudad Cliente', 'Ciudad Vendedor', 'Categoria Producto', 'Precio Unitario', 
-    # 'Cantidad', 'Costo Flete', 'Total Orden', 'Estado Orden', 'Calificacion', 'Tiempo de Reposicion']
-    ciudad_cliente = st.sidebar.text_input("Ciudad Cliente")
+    # 5 variables utilizadas para la predicción ['Ciudad Vendedor', 'Categoria Producto', 'Precio Unitario','Cantidad','Tiempo de Reposicion']
     ciudad_vendedor = st.sidebar.text_input("Ciudad Vendedor")
     categoria_producto = st.sidebar.selectbox("Categoría del Producto", [])  # Completa con las categorías disponibles
     precio_unitario = st.sidebar.number_input("Precio Unitario", min_value=0.0)
     cantidad = st.sidebar.slider("Cantidad de Orden", 1, 100, 1)
-    costo_flete = st.sidebar.number_input("Costo Flete", min_value=0.0)
-    total_orden = st.sidebar.number_input("Total de Orden", min_value=0.0)
-    estado_orden = st.sidebar.selectbox("Estado de Orden", ["Pendiente", "Completado", "Cancelado"])
-    calificacion = st.sidebar.slider("Calificación del Producto (1-5)", 1, 5, 3)
     tiempo_reposicion = st.sidebar.slider("Tiempo de Reposición (días)", 1, 30, 7)
     
 
     
     data = {
-        'Ciudad Cliente': ciudad_cliente,
         'Ciudad Vendedor': ciudad_vendedor,
         'Categoria Producto': categoria_producto,
         'Precio Unitario': precio_unitario,
         'Cantidad': cantidad,
-        'Costo Flete': costo_flete,
-        'Total Orden': total_orden,
-        'Estado Orden': estado_orden,
-        'Calificacion': calificacion,
         'Tiempo de Reposicion': tiempo_reposicion,
         
     }
