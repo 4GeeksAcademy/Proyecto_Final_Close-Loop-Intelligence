@@ -14,6 +14,7 @@ sqlalchemy>=2.0.38
 sympy>=1.10.1
 opendatasets
 xgboost
+sqlite3
 glob
 imblearn
 streamlit>=1.20.0
