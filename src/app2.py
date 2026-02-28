@@ -11,24 +11,42 @@ from prophet.plot import plot_plotly, plot_components_plotly
 st.set_page_config(page_title="Close-Loop Intelligence", layout="wide")
 
 # --- FUNCIONES DE CARGA DE MODELOS Y DATOS ---
+
 @st.cache_resource
 def load_classification_assets():
-    model = pickle.load(open('models/best_rf_model.sav', 'rb'))
-    scaler = pickle.load(open('models/scaler.pkl', 'rb'))
+    # Ubicamos la carpeta src y subimos un nivel a la raíz
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(base_path, '..', 'models', 'best_rf_model.sav')
+    scaler_path = os.path.join(base_path, '..', 'models', 'scaler.pkl')
+    
+    with open(model_path, 'rb') as f:
+        model = pickle.load(f)
+    with open(scaler_path, 'rb') as f:
+        scaler = pickle.load(f)
+        
     return model, scaler
 
 @st.cache_resource
 def get_prophet_forecast(cat_name):
-    """Carga el modelo específico y genera la predicción de 15 días"""
-    # Construcción dinámica del nombre según tu estructura
-    file_name = f"models/ProphetA_{cat_name.replace(' ', '_')}.pkl"
+    """Carga el modelo específico subiendo un nivel desde src hacia models"""
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    
+    # Construcción dinámica del nombre
+    nombre_archivo = f"ProphetA_{cat_name.replace(' ', '_')}.pkl"
+    full_path = os.path.join(base_path, '..', 'models', nombre_archivo)
+    
     try:
-        with open(file_name, 'rb') as f:
-            m = pickle.load(f)
-        future = m.make_future_dataframe(periods=15, freq='D')
-        forecast = m.predict(future)
-        return m, forecast
-    except FileNotFoundError:
+        if os.path.exists(full_path):
+            with open(full_path, 'rb') as f:
+                m = pickle.load(f)
+            future = m.make_future_dataframe(periods=15, freq='D')
+            forecast = m.predict(future)
+            return m, forecast
+        else:
+            st.error(f"No se encontró el modelo en: {full_path}")
+            return None, None
+    except Exception as e:
+        st.error(f"Error al cargar el modelo: {e}")
         return None, None
 
 
