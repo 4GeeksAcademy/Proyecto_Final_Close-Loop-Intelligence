@@ -35,10 +35,12 @@ def get_prophet_forecast(cat_name):
 @st.cache_data
 def cargar_diccionario_categorias():
     try:
-        base_path = os.path.dirname(__file__)
-        csv_path = os.path.join(base_path, 'data', 'interim', 'TopA.csv')
+        root_path = os.getcwd()
+        
+        csv_path = os.path.join(root_path, 'data', 'interim', 'TopA.csv')
+        if not os.path.exists(csv_path):
+            csv_path = os.path.join(root_path, 'src', 'data', 'interim', 'TopA.csv')
 
-        # 1. Leemos el archivo CSV
         TopA = pd.read_csv(csv_path)
         
         # 2. Convertimos la columna a una lista y creamos el diccionario
