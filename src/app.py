@@ -62,10 +62,10 @@ def user_input_features():
 
 # Escalado de variables numéricas con Min Max Scaler (usando los mismos parámetros que el entrenamiento)
 
-    #scaler = pickle.load(open('../models/scaler.pkl', 'rb'))
-    #data_scaled = scaler.fit_transform([[data['Precio Unitario'], data['Cantidad'], data['Tiempo de Reposicion']]])
+    scaler = pickle.load(open('../models/scaler.pkl', 'rb'))
+    data_scaled = scaler.fit_transform([[data['Precio Unitario'], data['Cantidad'], data['Tiempo de Reposicion']]])
 
-   # return pd.DataFrame(data_scaled, index=[0])
+    return pd.DataFrame(data_scaled, index=[0])
 
 df = user_input_features()
 
