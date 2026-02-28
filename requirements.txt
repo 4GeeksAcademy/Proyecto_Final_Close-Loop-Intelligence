@@ -17,4 +17,6 @@ xgboost
 sqlite3
 glob
 imblearn
+prophet
 streamlit>=1.20.0
+plotly>=5.15.0

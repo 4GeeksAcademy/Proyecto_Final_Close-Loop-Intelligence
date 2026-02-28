@@ -14,4 +14,7 @@ sqlalchemy>=2.0.38
 sympy>=1.10.1
 opendatasets
 xgboost
-streamlit>=1.20.0
+streamlit>=1.24.0
+plotly>=5.15.0
+prophet>=1.1.2
+sqlite3==3.50.3
