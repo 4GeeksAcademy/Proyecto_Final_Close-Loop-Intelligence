@@ -8,7 +8,7 @@ st.set_page_config(page_title="Clasificador ABC de Inventario", page_icon="📦"
 
 st.title("📦 Sistema de Clasificación ABC de Inventario")
 st.markdown("""
-Esta aplicación utiliza un modelo de **Random Forest** para predecir la Clasificacion de Rotación de un producto (A, B o C) 
+Esta aplicación utiliza un modelo de **Random Forest** para predecir la Clasificacion de Rotación de una Categoria de Producto (A, B o C) 
 basándose en variables logísticas y de ventas.
 """)
 
@@ -62,18 +62,18 @@ def user_input_features():
 
 # Escalado de variables numéricas con Min Max Scaler (usando los mismos parámetros que el entrenamiento)
 
-    scaler = pickle.load(open('../models/scaler.pkl', 'rb'))
-    data_scaled = scaler.fit_transform([[data['Precio Unitario'], data['Cantidad'], data['Tiempo de Reposicion']]])
+    #scaler = pickle.load(open('../models/scaler.pkl', 'rb'))
+    #data_scaled = scaler.fit_transform([[data['Precio Unitario'], data['Cantidad'], data['Tiempo de Reposicion']]])
 
-    return pd.DataFrame(data_scaled, index=[0])
+   # return pd.DataFrame(data_scaled, index=[0])
 
 df = user_input_features()
 
 
 
 # Predicción
-st.subheader("Predicción de Categoría")
-if st.button("Clasificar Producto"):
+st.subheader("Predicción de Clasificacion")
+if st.button("Clasificar Categoria"):
     prediction = model.predict(df)
     proba = model.predict_proba(df)
     
