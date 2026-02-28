@@ -11,5 +11,5 @@ data/processed/X_test_selected.csv
 data/processed/X_train_selected.csv
 models/best_rf_model.pklmodels/best_rf_model.pkl
 models/scaler.pkl
-data/interim/
+
 
