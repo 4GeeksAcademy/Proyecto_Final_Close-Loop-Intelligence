@@ -34,8 +34,11 @@ def get_prophet_forecast(cat_name):
 @st.cache_data
 def cargar_diccionario_categorias():
     try:
+        base_path = os.path.dirname(__file__)
+        csv_path = os.path.join(base_path, 'data', 'interim', 'TopA.csv')
+
         # 1. Leemos el archivo CSV
-        TopA = pd.read_csv('data/interim/TopA.csv')
+        TopA = pd.read_csv(csv_path)
         
         # 2. Convertimos la columna a una lista y creamos el diccionario
         # Usamos enumerate para asignarles un ID numérico automáticamente
@@ -46,6 +49,7 @@ def cargar_diccionario_categorias():
     except Exception as e:
         st.error(f"Error al cargar el archivo de categorías: {e}")
         return {}
+
 
 # --- DICCIONARIOS ---
 categorias = cargar_diccionario_categorias()
