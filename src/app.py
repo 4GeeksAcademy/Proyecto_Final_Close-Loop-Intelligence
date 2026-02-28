@@ -8,44 +8,70 @@ st.set_page_config(page_title="Clasificador ABC de Inventario", page_icon="📦"
 
 st.title("📦 Sistema de Clasificación ABC de Inventario")
 st.markdown("""
-Esta aplicación utiliza un modelo de **Random Forest** para predecir la categoría de un producto (A, B o C) 
+Esta aplicación utiliza un modelo de **Random Forest** para predecir la Clasificacion de Rotación de un producto (A, B o C) 
 basándose en variables logísticas y de ventas.
 """)
 
-# 1. Cargar el modelo
+# Cargar el modelo
 @st.cache_resource
 def load_model():
-    with open('models/best_rf_model.pkl', 'rb') as f:
+    with open('../models/best_rf_model.sav', 'rb') as f:
         return pickle.load(f)
 
 model = load_model()
 
-# 2. Formulario de entrada de datos
+# Mapeos
+ciudades_vendedor = {
+    "Sao Paulo": 0,
+    "Rio de Janeiro": 1,
+    "Belo Horizonte": 2,
+    "Curitiba": 3
+  ### Falta mapear el top 10 de ciudades
+}
+
+categorias = {
+    "Camas y Mesa": 0,
+    "Belleza y Salud": 1,
+    "Informática": 2,
+    "Deportes": 3
+   
+   ### Falta mapear el top 10 de categorias
+}
+
+# Formulario de entrada de datos
 st.sidebar.header("📥 Datos del Producto")
 
 def user_input_features():
     # 5 variables utilizadas para la predicción ['Ciudad Vendedor', 'Categoria Producto', 'Precio Unitario','Cantidad','Tiempo de Reposicion']
-    ciudad_vendedor = st.sidebar.text_input("Ciudad Vendedor")
-    categoria_producto = st.sidebar.selectbox("Categoría del Producto", [])  # Completa con las categorías disponibles
-    precio_unitario = st.sidebar.number_input("Precio Unitario", min_value=0.0)
-    cantidad = st.sidebar.slider("Cantidad de Orden", 1, 100, 1)
-    tiempo_reposicion = st.sidebar.slider("Tiempo de Reposición (días)", 1, 30, 7)
+    # Desplegables
+    ciudad = st.sidebar.selectbox("Ciudad del Vendedor", list(ciudades_vendedor.keys()))
+    cat = st.sidebar.selectbox("Categoría del Producto", list(categorias.keys()))
     
-
-    
+    # Numéricos
+    precio_unitario = st.sidebar.number_input("Precio Unitario", min_value=0.0, value=100.0)
+    cantidad = st.sidebar.slider("Cantidad", 1, 100, 5)
+    tiempo_reposicion = st.sidebar.slider("Tiempo de Reposición (días)", 1, 60, 15)
+        
     data = {
-        'Ciudad Vendedor': ciudad_vendedor,
-        'Categoria Producto': categoria_producto,
+        'Ciudad Vendedor': ciudades_vendedor[ciudad],
+        'Categoria Producto': categorias[cat],
         'Precio Unitario': precio_unitario,
         'Cantidad': cantidad,
-        'Tiempo de Reposicion': tiempo_reposicion,
-        
+        'Tiempo de Reposicion': tiempo_reposicion,   
     }
-    return pd.DataFrame(data, index=[0])
+
+# Escalado de variables numéricas con Min Max Scaler (usando los mismos parámetros que el entrenamiento)
+
+    scaler = pickle.load(open('../models/scaler.pkl', 'rb'))
+    data_scaled = scaler.fit_transform([[data['Precio Unitario'], data['Cantidad'], data['Tiempo de Reposicion']]])
+
+    return pd.DataFrame(data_scaled, index=[0])
 
 df = user_input_features()
 
-# 3. Predicción
+
+
+# Predicción
 st.subheader("Predicción de Categoría")
 if st.button("Clasificar Producto"):
     prediction = model.predict(df)
