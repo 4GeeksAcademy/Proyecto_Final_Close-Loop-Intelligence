@@ -3,7 +3,8 @@ import pandas as pd
 import pickle
 import numpy as np
 import plotly.graph_objects as go
-from prophet import Prophet # Asegúrate de tenerlo en requirements.txt
+from prophet import Prophet
+from prophet.plot import plot_plotly, plot_components_plotly
 
 # --- CONFIGURACIÓN Y CARGA ---
 st.set_page_config(page_title="Close-Loop Intelligence", layout="wide")
@@ -34,7 +35,7 @@ def get_prophet_forecast(cat_name):
 def cargar_diccionario_categorias():
     try:
         # 1. Leemos el archivo CSV
-        TopA = pd.read_csv('/workspaces/Proyecto_Final_Close-Loop-Intelligence/data/interim/TopA.csv')
+        TopA = pd.read_csv('data/interim/TopA.csv')
         
         # 2. Convertimos la columna a una lista y creamos el diccionario
         # Usamos enumerate para asignarles un ID numérico automáticamente
@@ -127,6 +128,56 @@ with tab2:
         default= None
     )
 
+    # --- MÉTRICAS DE RESUMEN QUINCENAL (BLINDADO) ---
+    st.divider()
+        
+    # 1. Verificación: ¿Hay categorías seleccionadas?
+    if seleccionadas:
+        st.subheader("📦 Planificación de Reabastecimiento (Próximos 15 días)")
+            
+        # Inicializamos el contador global
+        total_unidades_global = 0
+        datos_metricas = []
+
+        # 2. Procesamos los datos antes de mostrar para obtener el total global
+        for cat in seleccionadas:
+            model_p, forecast_p = get_prophet_forecast(cat)
+            if forecast_p is not None:
+            # Sumamos la predicción (yhat) de los últimos 15 días
+                suma_cat = forecast_p.tail(15)['yhat'].sum()
+                total_unidades_global += suma_cat
+                datos_metricas.append((cat, suma_cat))
+
+        # 3. Mostramos el Gran Total primero (Destacado)
+        col_total, _ = st.columns([1, 3])
+        with col_total:
+            st.metric(
+                    label="✨ TOTAL GLOBAL DE UNIDADES", 
+                    value=f"{int(total_unidades_global)} unids.",
+                    delta=f"{len(seleccionadas)} categorías analizadas",
+                    delta_color="normal"
+                )
+            
+        st.write("---") # Separador visual sutil
+
+        # 4. Mostramos el desglose por categorías en columnas dinámicas
+        # Usamos un máximo de 4 columnas por fila para que no se vea amontonado
+        num_cols = min(len(datos_metricas), 4)
+        cols = st.columns(num_cols)
+            
+        for i, (nombre_cat, valor) in enumerate(datos_metricas):
+                with cols[i % num_cols]:
+                    st.metric(
+                        label=f"Demanda {nombre_cat}", 
+                        value=f"{int(valor)} unids."
+                    )
+            
+        st.info(f"💡 Se recomienda asegurar un stock de al menos **{int(total_unidades_global)} unidades** para cubrir la demanda proyectada del conjunto seleccionado.")
+        
+    else:
+            # Mensaje amigable si no hay nada seleccionado
+        st.warning("⚠️ Por favor, seleccione al menos una categoría en el buscador superior para visualizar las métricas de abastecimiento.")
+
     if seleccionadas:
         fig_main = go.Figure()
         
@@ -159,18 +210,33 @@ with tab2:
         st.divider()
         if len(seleccionadas) == 1:
             col_a, col_b = st.columns(2)
-            model_p, forecast_p = get_prophet_forecast(seleccionadas[0])
+            cat_actual = seleccionadas[0]
+            model_p, forecast_p = get_prophet_forecast(cat_actual)
             
             with col_a:
                 st.subheader("📉 Componentes del Modelo")
-                fig_comp = model_p.plot_components(forecast_p)
-                st.write(fig_comp)
+                # Cambio a Plotly interactivo para tendencias
+                fig_comp = plot_components_plotly(model_p, forecast_p)
+                fig_comp.update_layout(height=1000) # Ajuste de altura para que quepa bien
+                st.plotly_chart(fig_comp, use_container_width=True)
                 
             with col_b:
                 st.subheader("✅ Validación (Predicción vs Real)")
-                # Aquí puedes graficar forecast_p['yhat'] contra tus datos históricos reales
-                st.write("Visualizando tendencia histórica y ajuste del modelo...")
-                fig_val = model_p.plot(forecast_p)
-                st.write(fig_val)
+                # Cambio a Plotly interactivo para Predicción vs Realidad
+                # Esto incluye los puntos negros (reales) y la línea/sombra azul
+                fig_val = plot_plotly(model_p, forecast_p)
+
+                fig_val.data[0].marker.color = '#00f2ff'  # Un cian brillante que resalta en fondo oscuro
+                fig_val.data[0].marker.size = 6
+                fig_val.data[1].line.color = '#ff7f0e'         
+                
+                fig_val.update_layout(
+                    title=f"Ajuste Histórico: {cat_actual}",
+                    height=1000,
+                    showlegend=True,
+                    paper_bgcolor='rgba(0,0,0,0)', 
+                    plot_bgcolor='rgba(0,0,0,0)'
+                )
+                st.plotly_chart(fig_val, use_container_width=True)
         else:
             st.caption("Seleccione una sola categoría para ver el desglose de componentes y validación detallada.")
