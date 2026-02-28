@@ -17,4 +17,3 @@ xgboost
 streamlit>=1.24.0
 plotly>=5.15.0
 prophet>=1.1.2
-sqlite3==3.50.3

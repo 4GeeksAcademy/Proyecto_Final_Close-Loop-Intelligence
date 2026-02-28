@@ -8,6 +8,7 @@ from prophet import Prophet # Asegúrate de tenerlo en requirements.txt
 # --- CONFIGURACIÓN Y CARGA ---
 st.set_page_config(page_title="Close-Loop Intelligence", layout="wide")
 
+# --- FUNCIONES DE CARGA DE MODELOS Y DATOS ---
 @st.cache_resource
 def load_classification_assets():
     model = pickle.load(open('models/best_rf_model.sav', 'rb'))
