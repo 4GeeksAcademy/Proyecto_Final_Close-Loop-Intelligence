@@ -163,6 +163,10 @@ with tab1:
                 
                 if prediction[0] == 0:
                     st.info("💡 **Sugerencia:** Esta Categoria de Producto es de alta prioridad. Revisa la pestaña de predicción para ajustar tu stock.")
+                if prediction[0] == 1:
+                    st.warning("⚠️ **Sugerencia:** Esta Categoria de Producto es de rotación media. Considera monitorear su desempeño y ajustar el stock según la demanda.")
+                if prediction[0] == 2:
+                    st.error("❌ **Sugerencia:** Esta Categoria de Producto es de baja rotación. Evalúa la posibilidad de reducir el stock o implementar estrategias para aumentar su demanda.")
             except Exception as e:
                 st.error(f"Error en la predicción: {e}")
 
