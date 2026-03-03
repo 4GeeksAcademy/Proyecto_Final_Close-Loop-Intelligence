@@ -83,7 +83,7 @@ def generar_diccionario_categorias_clasificacion():
         csv_path = os.path.join(path,'..' , 'data', 'interim', 'MasterVentas.csv')
         df_master = pd.read_csv(csv_path)
 
-        lista_categorias = df_master['Categoria Productos'].unique().tolist()
+        lista_categorias = df_master['Categoria Producto'].unique().tolist()
         
         diccionario = {cat: i for i, cat in enumerate(lista_categorias)}
         
