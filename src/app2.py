@@ -69,10 +69,34 @@ def cargar_diccionario_categorias():
     except Exception as e:
         st.error(f"Error al cargar el archivo de categorías: {e}")
         return {}
+    
+@st.cache_data
+def generar_diccionario_categorias_clasificacion():
+    """
+    Toma el DataFrame MasterVenta, extrae las categorías únicas 
+    y genera un diccionario con IDs numéricos.
+    """
+    try:
+
+        path = os.path.dirname(os.path.abspath(__file__))
+        
+        csv_path = os.path.join(path,'..' , 'data', 'interim', 'MasterVentas.csv')
+        df_master = pd.read_csv(csv_path)
+
+        lista_categorias = df_master['Categoria Productos'].unique().tolist()
+        
+        diccionario = {cat: i for i, cat in enumerate(lista_categorias)}
+        
+        return diccionario
+        
+    except Exception as e:
+        st.error(f"Error al procesar las categorías del DataFrame: {e}")
+        return {}
 
 
 # --- DICCIONARIOS ---
 categorias = cargar_diccionario_categorias()
+CategoriasClas = generar_diccionario_categorias_clasificacion()
 
 ciudades_vendedor = {
     "Sao Paulo": 0, "Rio de Janeiro": 1, "Belo Horizonte": 2, "Curitiba": 3,
@@ -96,7 +120,7 @@ with tab1:
     with col1:
         st.subheader("📥 Entrada de Datos")
         ciudad = st.selectbox("Ciudad del Vendedor", list(ciudades_vendedor.keys()))
-        cat = st.selectbox("Categoría de Producto", list(categorias.keys()))
+        cat = st.selectbox("Categoría de Producto", list(CategoriasClas.keys()))
         precio_unitario = st.number_input("Precio Unitario (USD)", min_value=0.0, value=100.0)
         cantidad = st.slider("Unidades", 1, 500, 50)
         tiempo_reposicion = st.slider("Días de Reposición", 1, 90, 15)
@@ -132,13 +156,13 @@ with tab1:
 
                 # Mostrar resultado con color
                 color = "green" if prediction[0] == 0 else "orange" if prediction[0] == 1 else "red"
-                st.markdown(f"### El producto es: <span style='color:{color}'>{clase_result}</span>", unsafe_allow_html=True)
+                st.markdown(f"### La Categoria de Producto es: <span style='color:{color}'>{clase_result}</span>", unsafe_allow_html=True)
                 
                 # Gráfico de probabilidades
                 st.bar_chart(pd.DataFrame(proba, columns=mapping_abc.values()).T)
                 
                 if prediction[0] == 0:
-                    st.info("💡 **Sugerencia:** Este producto es de alta prioridad. Revisa la pestaña de predicción para ajustar tu stock.")
+                    st.info("💡 **Sugerencia:** Esta Categoria de Producto es de alta prioridad. Revisa la pestaña de predicción para ajustar tu stock.")
             except Exception as e:
                 st.error(f"Error en la predicción: {e}")
 
